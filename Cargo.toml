@@ -1,0 +1,18 @@
+[package]
+name = "strut"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15.0"
+cen = { git = "https://github.com/n-e-l/cen.git", rev = "84b40830f7427419b8afd794c1fa4eb8fc5decf3" }
+#cen = "0.0.6"
+ash = "0.38.0"
+gpu-allocator = { version = "0.27.0" }
+egui = "0.32.0"
+egui_dock = "0.17"
+image = { version = "0.25", features = ["png"] }
+bytemuck = "1.21.0"
+okhsl = "1.0.1"
