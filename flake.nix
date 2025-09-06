@@ -14,12 +14,14 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
+        rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+          extensions = [ "rust-src" "rust-analyzer" ];
+        };
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Rust toolchain
-            rust-bin.stable.latest.default
+            rustToolchain
             
             # Development tools
             rust-analyzer
@@ -54,10 +56,8 @@
 	  shellHook = ''
             export VK_LAYER_PATH="${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d"
             export LD_LIBRARY_PATH="${pkgs.wayland}/lib:${pkgs.libxkbcommon}/lib:${pkgs.vulkan-loader}/lib:$LD_LIBRARY_PATH"
+            export RUST_SRC_PATH="${rustToolchain}/lib/rustlib/src/rust/library"
           '';
-
-          # Environment variables
-          RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
         };
       });
 }
