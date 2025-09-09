@@ -12,6 +12,9 @@ ash = "0.38.0"
 gpu-allocator = { version = "0.27.0" }
 egui = "0.32.0"
 egui_dock = "0.17"
+egui_extras = "0.32.0"
 image = { version = "0.25", features = ["png"] }
 bytemuck = "1.21.0"
 okhsl = "1.0.1"
+egui_code_editor = { version = "0.2" , features = ["editor"] }
+colorful = "0.2.2"

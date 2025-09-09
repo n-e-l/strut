@@ -1,4 +1,5 @@
-use egui::Style;
+use std::ops::RangeInclusive;
+use egui::{vec2, Color32, Pos2, Rect, Sense, Slider, Style, TextStyle, Vec2};
 use egui_dock::{DockArea, DockState};
 use egui_dock::tab_viewer::OnCloseResponse;
 use egui_dock::NodeIndex;
@@ -13,6 +14,8 @@ use cen::graphics::Renderer;
 use cen::graphics::renderer::RenderComponent;
 use cen::vulkan::CommandBuffer;
 use dotenv::dotenv;
+use egui_code_editor::{CodeEditor, ColorTheme, Syntax};
+use egui_extras::{Size, StripBuilder};
 
 struct Application {
     tree: DockState<String>,
@@ -30,11 +33,15 @@ impl Application {
 }
 
 struct TabViewer {
+    beats: usize,
+    code: String
 }
 
 impl TabViewer {
     fn new() -> TabViewer {
         Self {
+            beats: 4,
+            code: String::new()
         }
     }
 }
@@ -50,6 +57,56 @@ impl egui_dock::TabViewer for TabViewer {
         match tab.as_str() {
             _ => {
                 ui.label(tab.as_str());
+                let pixels_per_point = ui.ctx().pixels_per_point();
+                let available_width = ui.available_width();
+
+                ui.horizontal(|ui| {
+                    ui.spacing_mut().slider_width = 300.0;
+                    ui.add(
+                        Slider::new(&mut self.beats, RangeInclusive::new(0, 90))
+                    );
+                });
+
+                let width = 20.;
+                let height = 100.;
+
+                let size_pixels = vec2( ui.available_width() * pixels_per_point, height );
+                let size_points = size_pixels / pixels_per_point + Vec2::splat(2.0);
+                let (response, painter) = ui.allocate_painter(size_points, Sense::hover());
+
+                let mut cursor_pixel = Pos2::new(
+                    response.rect.min.x * pixels_per_point,
+                    response.rect.min.y * pixels_per_point,
+                )
+                    .ceil();
+                for i in 0..self.beats {
+                    let rect_points = Rect::from_min_size(
+                        Pos2::new(cursor_pixel.x, cursor_pixel.y),
+                        vec2(width, height)
+                    );
+                    painter.rect_filled(rect_points / pixels_per_point, 0.0, Color32::WHITE);
+                    cursor_pixel.x += width * 2.;
+                }
+
+                let mut code = r"
+t = {}
+t = { a = 1, b = 2 }
+t.a = function() ... end
+
+t = { ['hello'] = 200 }
+t.hello
+                ";
+                let theme = egui_extras::syntax_highlighting::CodeTheme::from_memory(ui.ctx(), ui.style());
+                egui_extras::syntax_highlighting::code_view_ui(ui, &theme, code.clone(), "rust");
+
+                CodeEditor::default()
+                    .id_source("code editor")
+                    .with_rows(12)
+                    .with_fontsize(14.0)
+                    .with_theme(ColorTheme::GRUVBOX)
+                    .with_syntax(Syntax::rust())
+                    .with_numlines(true)
+                    .show(ui, &mut self.code);
             }
         }
     }
