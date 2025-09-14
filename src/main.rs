@@ -11,7 +11,7 @@ use cen::app::App;
 use cen::app::app::AppConfig;
 use cen::app::gui::{GuiComponent, GuiSystem};
 use cen::graphics::Renderer;
-use cen::graphics::renderer::RenderComponent;
+use cen::graphics::renderer::{RenderComponent, RenderContext};
 use cen::vulkan::CommandBuffer;
 use dotenv::dotenv;
 use egui_code_editor::{CodeEditor, ColorTheme, Syntax};
@@ -88,17 +88,6 @@ impl egui_dock::TabViewer for TabViewer {
                     cursor_pixel.x += width * 2.;
                 }
 
-                let mut code = r"
-t = {}
-t = { a = 1, b = 2 }
-t.a = function() ... end
-
-t = { ['hello'] = 200 }
-t.hello
-                ";
-                let theme = egui_extras::syntax_highlighting::CodeTheme::from_memory(ui.ctx(), ui.style());
-                egui_extras::syntax_highlighting::code_view_ui(ui, &theme, code.clone(), "rust");
-
                 CodeEditor::default()
                     .id_source("code editor")
                     .with_rows(12)
@@ -152,7 +141,7 @@ impl RenderComponent for Application {
     fn initialize(&mut self, renderer: &mut Renderer) {
     }
 
-    fn render(&mut self, renderer: &mut Renderer, cb: &mut CommandBuffer, i: &Image, iv: &ImageView) {
+    fn render(&mut self, ctx: &mut RenderContext) {
     }
 }
 

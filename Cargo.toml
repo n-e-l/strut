@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 dotenv = "0.15.0"
-cen = { git = "https://github.com/n-e-l/cen.git", rev = "8d1f9241734ce25a0a40d25f744c66d528fcbe94" }
+cen = { git = "https://github.com/n-e-l/cen.git", rev = "a35022b08ef0f5cfb9e4154e6af73b93f8661a08" }
 ash = "0.38.0"
 gpu-allocator = { version = "0.27.0" }
 egui = "0.32.0"
